@@ -1,5 +1,7 @@
 # Done by chenchang
-add trajectory input in EurocStereoVIO.cpp # YGZ-Stereo-Inertial 20180104
+add trajectory input in EurocStereoVIO.cpp 
+
+# YGZ-Stereo-Inertial 20180104
 This is YGZ-stereo-inertial SLAM, a stereo inertial VO code. It is designed for stereo and stereo-inertial sensor modules like vi-sensor. It uses a LK optical flow as front-end and a sliding window bundle adjustment as a backend. Feel free to try it in datasets and your own sensors. 
 
 The code is experimental and I can't guarantee  its performance in all cases.
