@@ -96,6 +96,9 @@ int main(int argc, char **argv) {
 
         setting::TBC = SE3d(Rbc_, tbc_);
     }
+    
+    vector<Eigen::Matrix4d> campose;
+    vector<double> camtime;
 
     size_t imuIndex = 0;
     for (size_t i = 0; i < vstrImageLeft.size(); i++) {
@@ -109,7 +112,7 @@ int main(int argc, char **argv) {
             LOG(WARNING) << "Cannot load image " << i << endl;
             continue;
         }
-
+        
         cv::remap(imLeft, imLeftRect, M1l, M2l, cv::INTER_LINEAR);
         cv::remap(imRight, imRightRect, M1r, M2r, cv::INTER_LINEAR);
 
