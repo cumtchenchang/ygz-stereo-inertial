@@ -9,6 +9,13 @@ target_link_libraries(EurocStereoVIO
         ${YGZ_LIBS}
         ${THIRD_PARTY_LIBS}
         )
+        
+# cc add
+add_executable(MYNTStereoVIO MYNTStereoVIO.cpp)
+target_link_libraries(MYNTStereoVIO
+        ${YGZ_LIBS}
+        ${THIRD_PARTY_LIBS}
+        )
 
 add_executable(Kitti Kitti.cpp)
 target_link_libraries(Kitti
