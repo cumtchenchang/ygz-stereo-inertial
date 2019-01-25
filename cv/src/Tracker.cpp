@@ -1,3 +1,5 @@
+#include <iomanip>
+
 #include "ygz/Feature.h"
 #include "ygz/Tracker.h"
 #include "ygz/ORBMatcher.h"
@@ -131,7 +133,17 @@ namespace ygz {
             }
 
             if (NeedNewKeyFrame(TrackInliersCnt))
-                InsertKeyFrame();
+	    {
+	       InsertKeyFrame();
+// 	       ofstream f;
+//                f.open("keyframeID",ios::app);
+//                f << fixed;
+//                f << setprecision(0) << mpCurrentFrame->mnId << endl;//修改
+//                f.close();
+	    }
+               
+		
+
 
             // 尝试带着IMU初始化
             if (mbVisionOnlyMode == false) {
@@ -186,7 +198,15 @@ namespace ygz {
 
             // 处理关键帧
             if (NeedNewKeyFrame(TrackInliersCnt))
-                InsertKeyFrame();
+	    {
+	       InsertKeyFrame();
+// 	       ofstream f;
+//                f.open("keyframeID",ios::app);
+//                f << fixed;
+//                f << setprecision(0) << mpCurrentFrame->mnId << endl;//修改
+//                f.close();
+	    }
+       
 
 
             if (bOK) {
@@ -772,7 +792,7 @@ namespace ygz {
 
         // align 'world frame' to gravity vector, making mgWorld = [0,0,9.8]
         if (initflag) {
-            /*
+            
             // compute Rvw
             Vector3d gw1(0, 0, 1);
             Vector3d gv1 = g0 / g0.norm();
@@ -817,7 +837,7 @@ namespace ygz {
                 Vector3d Pw = Rwv * Pv;
                 mp->SetWorldPos(Pw);
             }
-             */
+         
             mgWorld = g0;
         }
         return initflag;

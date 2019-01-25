@@ -1,3 +1,5 @@
+#include <iomanip>
+
 #include "ygz/TrackerLK.h"
 #include "ygz/ORBExtractor.h"
 #include "ygz/ORBMatcher.h"
@@ -9,7 +11,7 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
-
+using namespace std;
 namespace ygz {
 
     TrackerLK::TrackerLK(const string &settingFile) {
@@ -65,6 +67,12 @@ namespace ygz {
         std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
         double timeCost = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1).count();
         LOG(INFO) << "Insert stereo cost time: " << timeCost << endl;
+	
+	ofstream f;
+        f.open("Insert_stereo_cost_time",ios::app);
+        f << fixed;
+        f << setprecision(0) << mpCurrentFrame->mnId << " " <<  setprecision(9) << timeCost<< endl;//修改
+        f.close();
 
         if (mpViewer) {
             if (mpCurrentFrame->IsKeyFrame()) {
@@ -77,7 +85,18 @@ namespace ygz {
 
         LOG(INFO) << "Tracker returns, pose = \n" << mpCurrentFrame->GetPose().matrix() << endl;
         if (mbVisionOnlyMode == false)
+	{
             LOG(INFO) << "speed and bias = \n" << mpCurrentFrame->mSpeedAndBias.transpose() << endl;
+	    
+	    
+	}
+	
+        ofstream f2;
+        f2.open("speed_and_bias",ios::app);
+        f2 << fixed;
+        f2 << setprecision(0) << mpCurrentFrame->mTimeStamp << " " <<  setprecision(9) << mpCurrentFrame->mSpeedAndBias.transpose()<< endl;//修改
+        f2.close();
+	
         return mpCurrentFrame->GetPose();
     }
 
@@ -101,6 +120,11 @@ namespace ygz {
 
             // 向后端添加关键帧
             InsertKeyFrame();
+	    ofstream f;
+            f.open("keyframeID_InsertKFtime",ios::app);
+            f << fixed;
+            f << setprecision(0) << mpCurrentFrame->mnId << endl;//修改
+            f.close();
 
             mpLastFrame = mpCurrentFrame;
             mpLastKeyFrame = mpCurrentFrame;
@@ -139,6 +163,14 @@ namespace ygz {
                 std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
                 double timeCost = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1).count();
                 LOG(INFO) << "Insert KF cost time: " << timeCost << endl;
+		
+	        ofstream f;
+                f.open("keyframeID_InsertKFtime",ios::app);
+                f << fixed;
+                f << setprecision(0) << mpCurrentFrame->mnId <<"   "<<setprecision(9)<<timeCost<< endl;//修改
+                f.close();
+		
+		
             } else {
 
             }
@@ -186,6 +218,11 @@ namespace ygz {
                     // 处理关键帧
                     CreateStereoMapPoints();
                     InsertKeyFrame();
+		    ofstream f;
+                    f.open("keyframeID_InsertKFtime",ios::app);
+                    f << fixed;
+                    f << setprecision(0) << mpCurrentFrame->mnId << endl;//修改
+                    f.close();
                 }
 
                 mpLastFrame = mpCurrentFrame;
@@ -211,7 +248,14 @@ namespace ygz {
                 mState = OK;
                 // 处理关键帧
                 if (NeedNewKeyFrame(mTrackInliersCnt))
+		{
                     InsertKeyFrame();
+/*		    ofstream f;
+                    f.open("keyframeID_InsertKFtime",ios::app);
+                    f << fixed;
+                    f << setprecision(0) << mpCurrentFrame->mnId << endl;//修改
+                    f.close();	*/	  
+		}
                 mpLastFrame = mpCurrentFrame;
             } else {
                 // track failed, try use current frame to init the stereo vision
@@ -222,6 +266,12 @@ namespace ygz {
                 CreateStereoMapPoints();
                 CleanOldFeatures();
                 InsertKeyFrame();
+                ofstream f;
+                f.open("keyframeID_InsertKFtime",ios::app);
+                f << fixed;
+                f << setprecision(0) << mpCurrentFrame->mnId << endl;//修改
+                f.close();
+		    
                 mState = OK;
                 mpLastFrame = mpCurrentFrame;
                 LOG(INFO) << "Recovered from WEAK into NOT_INITIALIZAED." << endl;
@@ -281,6 +331,7 @@ namespace ygz {
 
         LOG(INFO) << "Current features: " << mpCurrentFrame->mFeaturesLeft.size() << endl;
 
+
         if (validMatches <= setting::minTrackLastFrameFeatures) {
             LOG(WARNING) << "Track last frame not enough valid matches: " << validMatches << ", I will abort this frame"
                          << endl;
@@ -292,16 +343,22 @@ namespace ygz {
                   << mpLastFrame->mFeaturesLeft.size() << endl;
 
         std::chrono::steady_clock::time_point t3 = std::chrono::steady_clock::now();
-        double timeCost = std::chrono::duration_cast<std::chrono::duration<double> >(t3 - t1).count();
-        LOG(INFO) << "LK cost time: " << timeCost << ", pts: " << refPts.size() << endl;
+        double timeCost1 = std::chrono::duration_cast<std::chrono::duration<double> >(t3 - t1).count();
+        LOG(INFO) << "LK cost time: " << timeCost1 << ", pts: " << refPts.size() << endl;
 
         mTrackInliersCnt = OptimizeCurrentPose();
         // LOG(INFO) << "Track last frame inliers: " << inliers << endl;
 
         std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
-        timeCost = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1).count();
-        LOG(INFO) << "Track last frame cost time: " << timeCost << endl;
+        double timeCost2 = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1).count();
+        LOG(INFO) << "Track last frame cost time: " << timeCost2 << endl;
 
+	ofstream f;
+        f.open("frame_Currentfeatures_LKtrackedvalid_LKtimeCost_Trackcost",ios::app);
+        f << fixed;
+        f << setprecision(0) << mpCurrentFrame->mnId << "    " <<mpCurrentFrame->mFeaturesLeft.size()<<"    "<<setprecision(9) <<validMatches<<"    " <<timeCost1<<"    " <<timeCost2 <<endl;//修改
+        f.close();
+	
         if (mTrackInliersCnt >= setting::minTrackLastFrameFeatures) {
             return true;
         } else {
