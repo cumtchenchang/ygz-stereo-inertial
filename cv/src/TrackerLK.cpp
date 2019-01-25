@@ -94,7 +94,7 @@ namespace ygz {
         ofstream f2;
         f2.open("speed_and_bias",ios::app);
         f2 << fixed;
-        f2 << setprecision(0) << mpCurrentFrame->mTimeStamp << " " <<  setprecision(9) << mpCurrentFrame->mSpeedAndBias.transpose()<< endl;//修改
+        f2 << setprecision(9) << mpCurrentFrame->mTimeStamp << " " <<  setprecision(9) << mpCurrentFrame->mSpeedAndBias.transpose()<< endl;//修改
         f2.close();
 	
         return mpCurrentFrame->GetPose();
